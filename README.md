@@ -9,7 +9,7 @@ python -m venv .venv
 source .venv/bin/activate
 ```
 
-Run the jupiter enviroment
+Run the jupyter enviroment
 ```bash
 jupyter lab
 ```
