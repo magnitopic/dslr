@@ -34,3 +34,7 @@ Strongest correlation between courses
 Second strongest correlation between courses
 
 ![Scatter plot](output/scatter_plot_2.png)
+
+### Pair plot
+
+![Pair plot](output/pair_plot.png)
