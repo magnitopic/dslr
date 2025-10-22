@@ -10,6 +10,7 @@ source .venv/bin/activate
 ```
 
 Run the jupyter enviroment
+
 ```bash
 jupyter lab
 ```
@@ -23,3 +24,13 @@ jupyter lab
 ### Histogram
 
 ![Histogram](output/histogram.png)
+
+### Scatter plot
+
+Strongest correlation between courses
+
+![Scatter plot](output/scatter_plot.png)
+
+Second strongest correlation between courses
+
+![Scatter plot](output/scatter_plot_2.png)
