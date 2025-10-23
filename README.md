@@ -2,11 +2,12 @@
 
 ## Install
 
-> Create python virtual enviroment
+> Create python virtual enviroment and download dependencies
 
 ```bash
 python -m venv .venv
 source .venv/bin/activate
+pip install -r requirements.txt
 ```
 
 Run the jupyter enviroment
