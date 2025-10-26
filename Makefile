@@ -14,7 +14,7 @@ install-simple-deps:
 	venv/bin/pip install -r requirements_simple.txt
 
 describe:
-	@venv/bin/python3 src/describe.py
+	@venv/bin/python3 src/V1.Data_Analysis/describe.py
 
 train:
 	@venv/bin/python3 src/logreg_train.py
