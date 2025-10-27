@@ -1,5 +1,4 @@
 from .count import count
-from math import ceil
 
 def percentile(values, percentile):
     values.sort()

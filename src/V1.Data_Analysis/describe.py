@@ -5,19 +5,7 @@ def create_describe_file():
     data = pd.read_csv("./data/dataset_train.csv")
 
     # Select only numeric columns
-    data_numeric = data.select_dtypes(include=['number'])
-
-    # Define the aggregations 
-    agg_functions = {
-        'count': lambda x: count(x.tolist()),
-        'mean': lambda x: mean(x.tolist()),
-        'std': lambda x: std(x.tolist()),
-        'min': lambda x: min(x.tolist()),
-        '25%': lambda x: percentile(x.tolist(), 25),
-        '50%': lambda x: percentile(x.tolist(), 50),
-        '75%': lambda x: percentile(x.tolist(), 75),
-        'max': lambda x: max(x.tolist())
-    }
+    data_numeric = data.select_dtypes(include=['float64'])
 
     # Construct the final aggregation dictionary for ALL columns
     agg_list = [
@@ -28,7 +16,9 @@ def create_describe_file():
         ('25%', lambda x: percentile(x, 25)),
         ('50%', lambda x: percentile(x, 50)),
         ('75%', lambda x: percentile(x, 75)),
-        ('max', lambda x: max(x))           
+        ('max', lambda x: max(x)),
+        ('skew', lambda x: skew(x)),
+        ('iqr', lambda x: iqr(x))
     ]
 
     results = {}
