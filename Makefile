@@ -14,5 +14,5 @@ describe:
 	@venv/bin/python3 src/V1.Data_Analysis/describe.py
 
 train:
-	@venv/bin/python3 src/logreg_train.py
+	@venv/bin/python3 src/V3.Logistic_Regression/logreg_train.py data/dataset_train.csv
 

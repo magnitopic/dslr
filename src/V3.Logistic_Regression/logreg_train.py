@@ -16,7 +16,7 @@ learning_rate = 0.01
 
 # Logistic Regression Base Functions
 
-""" 
+r""" 
 Sigmoid formula
 
 $$
@@ -29,7 +29,7 @@ def sigmoid(z):
     return 1 / (1 + np.exp(-z))
 
 
-""" 
+r""" 
 Cost Function
 
 $$
@@ -46,7 +46,7 @@ def compute_cost(X, y, theta):
     return cost
 
 
-""" 
+r""" 
 Gradient descent
 
 $$
@@ -170,7 +170,7 @@ def main():
     with open('trained_params.json', 'w') as f:
         json.dump(params_to_save, f, indent=4)
         
-    print("\Succes: Parameters saved in 'trained_params.json'")
+    print("Success: Parameters saved in 'trained_params.json'")
     print(f"Dimensions of saved theta (Classes x coefficients): {trained_theta.shape}")
 
 if __name__ == "__main__":
