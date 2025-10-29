@@ -1,14 +1,18 @@
 import sys
+import os
 import pandas as pd # type: ignore
 import numpy as np  # type: ignore
 import json 
 
-from normalize import *
-from imputation import *
+# Add V3.Logistic_Regression directory to path
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'V3.Logistic_Regression'))
+
+from normalize import fill_data_correlation, normalize
+from imputation import impute_missing_values
 
 # Train Variables 
-iterations = 2000
-learning_rate = 0.01
+iterations = 50
+learning_rate = 0.001
 
 
 # Logistic Regression Base Functions
@@ -50,22 +54,35 @@ $$
 \frac{\partial}{\partial \theta_j} J(\theta) = \frac{1}{m} \sum_{i=1}^{m} \left( h_{\theta}(x^{(i)}) - y^{(i)} \right) x_j^{(i)}
 $$
 """
-def gradient_descent(X, y, theta, alpha, iterations):
+def stochastic_gradient_descent(X, y, theta, alpha, epochs):
     m = len(y)
     J_history = []
 
-    for _ in range(iterations):
-        # 1. Compute error
-        h = sigmoid(X @ theta)
-        error = h - y
+    for epoch in range(epochs):
+        # 1. Shuffle data in each epoch
+        indices = np.arange(m)
+        np.random.shuffle(indices)
+        X_shuffled = X[indices]
+        y_shuffled = y[indices]
 
-        # 2. Compute gradient
-        gradient = (1 / m) * (X.T @ error)
+        
+        # 2. Loop for each training example
+        for i in range(m):
+            # Select an unic element
+            X_i = X_shuffled[i:i+1] 
+            y_i = y_shuffled[i:i+1]
 
-        # 3. Update theta
-        theta = theta - alpha * gradient
+            # Compute error
+            h_i = sigmoid(X_i @ theta)
+            error_i = h_i - y_i
 
-        # 4. Save cost
+            # Compute gradient for that unic example
+            gradient = (X_i.T @ error_i).flatten()
+
+            # Update theta
+            theta = theta - alpha * gradient
+
+        # 3. Save cost
         J_history.append(compute_cost(X, y, theta))
 
     return theta, J_history
@@ -87,7 +104,7 @@ def one_vs_all_train(X, y, num_labels, alpha, iterations):
         y_c = (y == c).astype(int) 
         
         # Train with gradient descent
-        theta_c, _ = gradient_descent(X_b, y_c, initial_theta, alpha, iterations)
+        theta_c, _ = stochastic_gradient_descent(X_b, y_c, initial_theta, alpha, iterations)
         
         # Save trained parameters
         all_theta[c-1, :] = theta_c
@@ -103,7 +120,7 @@ def main():
         return
     
     # Extract labels (Hogwarts House)
-    y_labels = data['Hogwarts House'].copy()
+    y_labels = data['Hogwarts House']
     
     # Normalize Data
     fill_data_correlation(data)
@@ -112,7 +129,8 @@ def main():
     fields = fields.drop('History of Magic')
     print(fields)
 
-    new_data = data[fields]
+    # Remove Hogwarts House from data before normalization
+    new_data = data[fields].copy()
     print(new_data)
 
     df_norm = new_data.apply(normalize, axis=0)
