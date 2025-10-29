@@ -1,4 +1,4 @@
-all: create-venv install-simple-deps
+all: create-venv install-deps
 
 create-venv:
 	python3 -m venv venv
@@ -9,9 +9,6 @@ jupyter:
 
 install-deps:
 	venv/bin/pip install -r requirements.txt
-
-install-simple-deps:
-	venv/bin/pip install -r requirements_simple.txt
 
 describe:
 	@venv/bin/python3 src/V1.Data_Analysis/describe.py
