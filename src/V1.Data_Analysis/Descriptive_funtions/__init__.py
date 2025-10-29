@@ -1,4 +1,5 @@
-"""Package initializer for Descriptive_funtions.
+"""
+Package initializer for Descriptive_funtions.
 
 This re-exports the functions defined in the sibling modules so that
 `from Descriptive_funtions import *` will provide the expected symbols.
