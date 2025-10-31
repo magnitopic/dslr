@@ -127,6 +127,9 @@ def main():
     fields = data.select_dtypes(include=['float64']).columns
     fields = fields.drop('Astronomy')
     fields = fields.drop('History of Magic')
+    fields = fields.drop('Arithmancy')
+    fields = fields.drop('Potions')
+    fields = fields.drop('Care of Magical Creatures')
     print(fields)
 
     # Remove Hogwarts House from data before normalization
