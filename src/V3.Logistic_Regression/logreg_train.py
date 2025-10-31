@@ -1,7 +1,11 @@
 import sys
 import pandas as pd  # type: ignore
 import numpy as np  # type: ignore
+import matplotlib
+matplotlib.use('Qt5Agg')
+import matplotlib.pyplot as plt
 import json
+from sklearn.model_selection import train_test_split
 
 from normalize import *
 from imputation import *
@@ -50,10 +54,10 @@ $$
 \frac{\partial}{\partial \theta_j} J(\theta) = \frac{1}{m} \sum_{i=1}^{m} \left( h_{\theta}(x^{(i)}) - y^{(i)} \right) x_j^{(i)}
 $$
 """
-def gradient_descent(X, y, theta, alpha, iterations):
+def gradient_descent(X, y, theta, alpha, iterations, X_val=None, y_val=None):
     m = len(y)
-    J_history = []
-
+    J_history_train = []
+    J_history_val = []
     for _ in range(iterations):
         # 1. Compute error
         h = sigmoid(X @ theta)
@@ -66,33 +70,50 @@ def gradient_descent(X, y, theta, alpha, iterations):
         theta = theta - alpha * gradient
 
         # 4. Save cost
-        J_history.append(compute_cost(X, y, theta))
+        J_history_train.append(compute_cost(X, y, theta))
+        
+        if X_val is not None and y_val is not None:
+            J_history_val.append(compute_cost(X_val, y_val, theta))
 
-    return theta, J_history
+    return theta, J_history_train, J_history_val
+
 
 # 2. One vs All
-
-
-def one_vs_all_train(X, y, num_labels, alpha, iterations):
+def one_vs_all_train(X, y, X_val, y_val, num_labels, alpha, iterations):
     m, n = X.shape
 
     # Matrix to store the coefficients of all classifiers
     all_theta = np.zeros((num_labels, n + 1))
 
     X_b = np.c_[np.ones((m, 1)), X]
+    X_val_b = np.c_[np.ones((X_val.shape[0], 1)), X_val]
+
+    plt.figure(figsize=(8, 6))
 
     for c in range(1, num_labels + 1):
         initial_theta = np.zeros(n + 1)
 
         # Create binary labels
         y_c = (y == c).astype(int)
+        y_val_c = (y_val == c).astype(int)
 
         # Train with gradient descent
-        theta_c, _ = gradient_descent(
-            X_b, y_c, initial_theta, alpha, iterations)
+        theta_c, J_train, J_val = gradient_descent(
+            X_b, y_c, initial_theta, alpha, iterations, X_val=X_val_b, y_val=y_val_c)
 
         # Save trained parameters
         all_theta[c-1, :] = theta_c
+
+        # Draw cost curve
+        plt.plot(J_train, label=f'Class {c}')
+        plt.plot(J_val, linestyle='--', label=f'Val: Class {c}')
+
+    plt.title('Cost evolution (J) during train')
+    plt.xlabel('Iterations')
+    plt.ylabel('Cost J(θ)')
+    plt.legend()
+    plt.grid(True)
+    plt.show()
 
     return all_theta
 
@@ -146,8 +167,12 @@ def main():
         'Ravenclaw': 3,
         'Slytherin': 4
     }
+
     y = y_labels.map(house_mapping).values
     num_labels = len(house_mapping)
+
+    X_train, X_val, y_train, y_val = train_test_split(
+        X, y, test_size=0.2, random_state=42, stratify=y)
 
     print(f"\nTraining with {num_labels} classes")
     print(f"Features shape: {X.shape}")
@@ -155,8 +180,10 @@ def main():
 
     # Train model One-Vs-All
     trained_theta = one_vs_all_train(
-        X,
-        y,
+        X_train,
+        y_train,
+        X_val,
+        y_val,
         num_labels,
         alpha=learning_rate,
         iterations=iterations
